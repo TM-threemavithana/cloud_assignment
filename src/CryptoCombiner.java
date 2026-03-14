@@ -2,26 +2,6 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-/**
- * CryptoCombiner — Local combiner for partial aggregation before the shuffle
- * phase.
- *
- * This combiner runs on the mapper node to reduce network I/O by
- * pre-aggregating
- * daily records into partial summaries. Instead of sending every individual
- * daily
- * record across the network, it sends a single partial summary per Symbol+Year
- * per mapper.
- *
- * The combiner emits a consolidated value string containing:
- * "totalClose,maxHigh,minLow,totalRange,count"
- *
- * This is compatible with the Reducer which handles both raw mapper output
- * (3 fields: high,low,close) and combiner output (5 fields: totalClose,maxHigh,
- * minLow,totalRange,count).
- *
- * @author Cloud Computing Assignment — EE7222/EC7204
- */
 public class CryptoCombiner extends Reducer<Text, Text, Text, Text> {
 
     private final Text outputValue = new Text();

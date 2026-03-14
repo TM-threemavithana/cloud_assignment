@@ -51,6 +51,10 @@ $HDFS_BIN dfs -put "$INPUT_CSV" "$HDFS_INPUT_DIR/"
 # 3. Run the MapReduce Job using our compiled JAR
 echo "Starting Hadoop MapReduce Job (Java)..."
 
+export HADOOP_CLIENT_OPTS="-Xmx512m"
+export YARN_CLIENT_OPTS="-Xmx512m"
+export HADOOP_OPTS="-Xmx512m"
+
 $HADOOP_BIN jar $JAR_PATH CryptoDriver \
     "$HDFS_INPUT_DIR/$(basename "$INPUT_CSV")" \
     "$HDFS_OUTPUT_DIR"
