@@ -36,6 +36,8 @@ export PATH="$JAVA_HOME/bin:$PATH"
 
 HADOOP_BIN="$HADOOP_HOME/bin/hadoop"
 HDFS_BIN="$HADOOP_HOME/bin/hdfs"
+SUMMARY_DIR="$PROJECT_ROOT/hadoop_summary"
+SUMMARY_FILE="$SUMMARY_DIR/run_summary.md"
 
 # 1. Clean up HDFS
 echo "Cleaning up previous HDFS directories..."
@@ -84,6 +86,48 @@ if [ $? -eq 0 ]; then
         rm -rf "$LOCAL_TOPK_OUTPUT_DIR"
         mkdir -p "$LOCAL_TOPK_OUTPUT_DIR"
         $HDFS_BIN dfs -get "$HDFS_TOPK_OUTPUT_DIR/*" "$LOCAL_TOPK_OUTPUT_DIR/"
+    fi
+
+    AGG_FILE="$LOCAL_OUTPUT_DIR/part-r-00000"
+    TOPK_FILE="$LOCAL_TOPK_OUTPUT_DIR/part-r-00000"
+
+    if [ -f "$AGG_FILE" ] && [ -f "$TOPK_FILE" ]; then
+        echo "Generating summary file..."
+        mkdir -p "$SUMMARY_DIR"
+
+        GENERATED_AT=$(date '+%Y-%m-%d %H:%M:%S')
+        AGG_ROWS=$(wc -l < "$AGG_FILE" | tr -d ' ')
+        TOPK_ROWS=$(wc -l < "$TOPK_FILE" | tr -d ' ')
+        YEAR_COUNT=$(cut -f1 "$TOPK_FILE" | sort -u | wc -l | tr -d ' ')
+        TOP_VOL_LINE=$(awk -F'\t' 'BEGIN{max=-1} {if(($6+0)>max){max=$6;line=$0}} END{print line}' "$AGG_FILE")
+
+        TOP_SYMBOL=$(echo "$TOP_VOL_LINE" | awk -F'\t' '{print $1}')
+        TOP_YEAR=$(echo "$TOP_VOL_LINE" | awk -F'\t' '{print $2}')
+        TOP_RANGE=$(echo "$TOP_VOL_LINE" | awk -F'\t' '{print $6}')
+
+        {
+            echo "# Hadoop Run Summary"
+            echo ""
+            echo "## Run Metrics"
+            echo "| Metric | Value |"
+            echo "|---|---|"
+            echo "| Generated At | $GENERATED_AT |"
+            echo "| Aggregate Rows | $AGG_ROWS |"
+            echo "| Top-K Rows | $TOPK_ROWS |"
+            echo "| Years Covered | $YEAR_COUNT |"
+            echo "| Highest Avg Daily Range (Overall) | $TOP_SYMBOL ($TOP_YEAR) = $TOP_RANGE |"
+            echo ""
+            echo "## Yearly #1 Most Volatile (Aligned Table)"
+            echo '```text'
+            printf '%-6s | %-12s | %-15s | %-12s | %-12s | %-12s | %-12s\n' "Year" "Symbol" "AvgDailyRange" "AvgClose" "MaxHigh" "MinLow" "TradingDays"
+            printf '%-6s-+-%-12s-+-%-15s-+-%-12s-+-%-12s-+-%-12s-+-%-12s\n' "------" "------------" "---------------" "------------" "------------" "------------" "------------"
+            awk -F'\t' '$2==1 {printf("%-6s | %-12s | %-15s | %-12s | %-12s | %-12s | %-12s\n", $1, $3, $4, $5, $6, $7, $8)}' "$TOPK_FILE"
+            echo '```'
+        } > "$SUMMARY_FILE"
+
+        echo "Summary written to $SUMMARY_FILE"
+    else
+        echo "Skipping summary generation: required output files not found."
     fi
 
     echo "Done! Output saved to cloud_assignment/hadoop_output/ and cloud_assignment/hadoop_output_topk/"

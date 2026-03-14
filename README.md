@@ -76,7 +76,8 @@ dos2unix start_and_run_hadoop.sh && chmod +x start_and_run_hadoop.sh
 3.  **Uploads Data & Runs Job**: Calls `run_hadoop.sh` which uploads the CSV to HDFS and executes `hadoop jar crypto-analysis.jar CryptoDriver`.
 4.  **Runs Top-K Volatility Job**: Computes Top-10 most volatile coins per year from yearly aggregate output.
 5.  **Retrieves Output**: Copies primary results to `hadoop_output/` and Top-K results to `hadoop_output_topk/`.
-6.  **Stops Hadoop**: Safely shuts down all daemons.
+6.  **Generates Summary**: Writes `hadoop_summary/run_summary.md` with run metrics and an aligned yearly Top-1 table.
+7.  **Stops Hadoop**: Safely shuts down all daemons.
 
 ## Files in this Repository
 
@@ -95,4 +96,5 @@ dos2unix start_and_run_hadoop.sh && chmod +x start_and_run_hadoop.sh
 | `data/` | Kaggle dataset directory |
 | `hadoop_output/` | Final aggregated MapReduce results |
 | `hadoop_output_topk/` | Top-10 volatility results by year |
+| `hadoop_summary/` | Auto-generated markdown summary from each run |
 | `report.md` | 2-page analysis report |
