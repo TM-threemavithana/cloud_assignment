@@ -38,12 +38,22 @@ The MapReduce logic is implemented in Java under the `src/` directory:
 |------|-------------|
 | `src/CryptoMapper.java` | Parses CSV rows, extracts `Symbol,Year` as key and `High,Low,Close` as value |
 | `src/CryptoReducer.java` | Aggregates daily data into yearly metrics: Avg Close, Max High, Min Low, Avg Daily Range, Trading Days |
-| `src/CryptoDriver.java` | Configures and launches the MapReduce job |
+| `src/CryptoDriver.java` | Configures and launches the primary MapReduce job |
+| `src/TopKVolatilityMapper.java` | Parses yearly aggregate output and groups rows by year |
+| `src/TopKVolatilityReducer.java` | Selects Top-K most volatile cryptocurrencies per year |
+| `src/TopKVolatilityDriver.java` | Configures and launches the Top-K volatility MapReduce job |
+
+## Portable Configuration (.env)
+
+This project requires a `.env` file so paths can be changed without editing scripts.
+
+Edit `.env` and set values for your machine (especially `PROJECT_ROOT`, `JAVA11_HOME`, and `HADOOP_HOME`).
+All scripts (`build.sh`, `run_hadoop.sh`, and `start_and_run_hadoop.sh`) fail fast if `.env` is missing or required variables are not set.
 
 ### Building the JAR
 
 ```bash
-cd /mnt/c/Users/User/cloud_assignment
+cd /path/to/your/project
 dos2unix build.sh && chmod +x build.sh
 ./build.sh
 ```
@@ -55,7 +65,7 @@ This compiles the Java sources against the Hadoop classpath and packages them in
 Run the entire pipeline (start Hadoop → upload data → run job → retrieve output → stop Hadoop):
 
 ```bash
-cd /mnt/c/Users/User/cloud_assignment
+cd /path/to/your/project
 dos2unix start_and_run_hadoop.sh && chmod +x start_and_run_hadoop.sh
 ./start_and_run_hadoop.sh
 ```
@@ -64,8 +74,9 @@ dos2unix start_and_run_hadoop.sh && chmod +x start_and_run_hadoop.sh
 1.  **Starts Hadoop**: Launches HDFS (NameNode/DataNode) and YARN (ResourceManager/NodeManager).
 2.  **Waits for SafeMode**: Ensures NameNode is ready.
 3.  **Uploads Data & Runs Job**: Calls `run_hadoop.sh` which uploads the CSV to HDFS and executes `hadoop jar crypto-analysis.jar CryptoDriver`.
-4.  **Retrieves Output**: Copies results from HDFS to `hadoop_output/part-r-00000`.
-5.  **Stops Hadoop**: Safely shuts down all daemons.
+4.  **Runs Top-K Volatility Job**: Computes Top-10 most volatile coins per year from yearly aggregate output.
+5.  **Retrieves Output**: Copies primary results to `hadoop_output/` and Top-K results to `hadoop_output_topk/`.
+6.  **Stops Hadoop**: Safely shuts down all daemons.
 
 ## Files in this Repository
 
@@ -74,9 +85,14 @@ dos2unix start_and_run_hadoop.sh && chmod +x start_and_run_hadoop.sh
 | `src/CryptoMapper.java` | Java Mapper class |
 | `src/CryptoReducer.java` | Java Reducer class |
 | `src/CryptoDriver.java` | Java Driver class |
+| `src/TopKVolatilityMapper.java` | Java Mapper class for Top-K volatility ranking |
+| `src/TopKVolatilityReducer.java` | Java Reducer class for Top-K volatility ranking |
+| `src/TopKVolatilityDriver.java` | Java Driver class for Top-K volatility ranking |
 | `build.sh` | Script to compile Java and create `crypto-analysis.jar` |
 | `run_hadoop.sh` | HDFS upload + MapReduce execution script |
 | `start_and_run_hadoop.sh` | Wrapper to start/stop Hadoop around the job |
+| `.env` | Machine-specific paths and settings |
 | `data/` | Kaggle dataset directory |
 | `hadoop_output/` | Final aggregated MapReduce results |
+| `hadoop_output_topk/` | Top-10 volatility results by year |
 | `report.md` | 2-page analysis report |
