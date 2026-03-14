@@ -2,38 +2,11 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-/**
- * CryptoReducer — Hadoop Reducer for cryptocurrency yearly price analysis.
- *
- * Input: Key = "SYMBOL,YEAR" | Values = iterable of value strings
- * Output: Tab-separated row: Symbol Year AvgClose MaxHigh MinLow AvgDailyRange
- * TradingDays
- *
- * Handles two formats of input values:
- * - Raw from Mapper (3 fields): "high,low,close"
- * - Pre-aggregated from Combiner (5 fields):
- * "totalClose,maxHigh,minLow,totalRange,count"
- *
- * Aggregation metrics:
- * - Average Close Price → mean of all daily closing prices
- * - Maximum High → absolute peak price for the year
- * - Minimum Low → absolute lowest price for the year
- * - Average Daily Range → mean of (High - Low) per day — volatility proxy
- * - Trading Days → number of valid data points
- *
- * @author Cloud Computing Assignment — EE7222/EC7204
- */
 public class CryptoReducer extends Reducer<Text, Text, Text, Text> {
 
     private final Text result = new Text();
 
-    /**
-     * Reduce function — aggregates daily price data for one Symbol+Year.
-     *
-     * @param key     Composite key "SYMBOL,YEAR"
-     * @param values  Daily price values (raw or pre-aggregated)
-     * @param context MapReduce context for emitting the final result
-     */
+
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context)
             throws IOException, InterruptedException {

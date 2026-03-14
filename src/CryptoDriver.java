@@ -5,22 +5,6 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-/**
- * CryptoDriver — Entry point for the Hadoop MapReduce cryptocurrency analysis
- * job.
- *
- * Usage: hadoop jar crypto-analysis.jar CryptoDriver &lt;input_path&gt;
- * &lt;output_path&gt;
- *
- * This driver configures and submits a MapReduce job that:
- * 1. Reads a CSV file of daily cryptocurrency prices from HDFS
- * 2. Maps each row to (Symbol+Year → High,Low,Close) pairs
- * 3. Uses a Combiner (CryptoCombiner) for local pre-aggregation to reduce
- * shuffle
- * 4. Reduces all values per Symbol+Year into yearly summary metrics
- *
- * @author Cloud Computing Assignment — EE7222/EC7204
- */
 public class CryptoDriver {
 
     public static void main(String[] args) throws Exception {

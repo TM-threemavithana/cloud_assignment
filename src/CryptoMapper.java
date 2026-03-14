@@ -2,31 +2,12 @@ import java.io.IOException;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-
-/**
- * CryptoMapper — Hadoop Mapper for cryptocurrency yearly price analysis.
- *
- * Input: Each line of the CSV dataset (symbol, date, open, high, low, close,
- * network)
- * Output: Key = "SYMBOL,YEAR" | Value = "high,low,close"
- *
- * The mapper extracts the year from the date field and emits composite keys
- * so the reducer can aggregate daily prices by cryptocurrency per year.
- *
- * @author Cloud Computing Assignment — EE7222/EC7204
- */
 public class CryptoMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     private final Text outputKey = new Text();
     private final Text outputValue = new Text();
 
-    /**
-     * Map function — processes one CSV line at a time.
-     *
-     * @param key     Byte offset of the line in the file (ignored)
-     * @param value   The CSV line as Text
-     * @param context MapReduce context for emitting key-value pairs
-     */
+    
     @Override
     protected void map(LongWritable key, Text value, Context context)
             throws IOException, InterruptedException {
