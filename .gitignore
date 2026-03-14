@@ -1,17 +1,9 @@
 /.qodo
 
-# Local environment config
-.env
-
 # Java/Hadoop build artifacts
 build/
 *.class
 *.jar
-
-# Runtime outputs
-hadoop_output/
-hadoop_output_topk/
-hadoop_summary/
 
 # OS/editor noise
 .DS_Store
