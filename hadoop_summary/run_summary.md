@@ -3,7 +3,7 @@
 ## Run Metrics
 | Metric | Value |
 |---|---|
-| Generated At | 2026-03-14 16:24:21 |
+| Generated At | 2026-03-14 23:22:14 |
 | Aggregate Rows | 674 |
 | Top-K Rows | 80 |
 | Years Covered | 8 |

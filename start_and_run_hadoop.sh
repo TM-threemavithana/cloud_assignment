@@ -41,3 +41,11 @@ echo "Running Hadoop MapReduce job script..."
 echo "Stopping Hadoop cluster..."
 "$HADOOP_HOME/sbin/stop-yarn.sh"
 "$HADOOP_HOME/sbin/stop-dfs.sh"
+
+# Show run summary in terminal
+if [ -f "$PROJECT_ROOT/hadoop_summary/run_summary.md" ]; then
+    echo ""
+    echo "========== RUN SUMMARY =========="
+    cat "$PROJECT_ROOT/hadoop_summary/run_summary.md"
+    echo "================================="
+fi
