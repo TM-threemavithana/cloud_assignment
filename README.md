@@ -79,6 +79,23 @@ OUTPUT (Top-K)
 
 ---
 
+**Primary Job (Yearly Aggregation)**
+- **Mapper Output**: Key: `Symbol, Year` | Value: `High, Low, Close`
+- **Combiner Output**: Partial local aggregation to drastically minimize network shuffle.
+- **Reducer Output**: 
+  - Average Close Price
+  - Maximum High
+  - Minimum Low
+  - Average Daily Range (Volatility)
+  - Trading Days
+
+
+**Secondary Job (Top-K Volatility Ranking)**
+- **Mapper Output**: Groups by `Year`
+- **Reducer Output**: Ranks the top 10 most volatile cryptocurrencies per year based on their Average Daily Range.
+
+---
+
 ## Prerequisites
 
 - Ubuntu 20.04 or later (or WSL2 on Windows)
@@ -142,6 +159,10 @@ You should see:
 - ResourceManager
 - NodeManager
 - SecondaryNameNode
+
+**Web Interfaces**:
+- HDFS NameNode: http://localhost:9870
+- YARN ResourceManager: http://localhost:8088
 
 ### Step 2 - Upload Dataset to HDFS
 
