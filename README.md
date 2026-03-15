@@ -88,11 +88,13 @@ OUTPUT (Top-K)
   - Minimum Low
   - Average Daily Range (Volatility)
   - Trading Days
----
+
 
 **Secondary Job (Top-K Volatility Ranking)**
 - **Mapper Output**: Groups by `Year`
 - **Reducer Output**: Ranks the top 10 most volatile cryptocurrencies per year based on their Average Daily Range.
+
+---
 
 ## Prerequisites
 
