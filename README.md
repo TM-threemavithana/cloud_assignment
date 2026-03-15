@@ -264,12 +264,6 @@ dos2unix build.sh run_hadoop.sh start_and_run_hadoop.sh .env
 
 ---
 
-## License
-
-This project is submitted as part of an academic assignment. Dataset copyright belongs to the original authors on Kaggle.
-
----
-
 ## Team Members
 
 Karunarathne S.M.G.S. - EG/2021/4602  
